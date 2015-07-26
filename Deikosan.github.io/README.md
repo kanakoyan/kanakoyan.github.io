@@ -1,2 +1,0 @@
-# Deikosan.github.io
-
