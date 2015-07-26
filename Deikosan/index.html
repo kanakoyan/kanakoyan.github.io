@@ -4,7 +4,70 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta http-equiv="content-language" content="ja">
     <title>Deiko Diary</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript">
+    $(function(){
+      var stream = $('#stream');
+      var date = new Date();
+      var next = date.getFullYear() + '';
+      if (date.getMonth() + 1 < 10) next += '0';
+      next += (date.getMonth() + 1);
+      if (date.getDate() < 10) next += '0';
+      next += date.getDate();
+      if (date.getHours() < 10) next += '0';
+      next += date.getHours();
+      if (date.getMinutes() < 10) next += '0';
+      next += date.getMinutes();
+      if (date.getSeconds() < 10) next += '0';
+      next += date.getSeconds();
+
+      get(next);
+
+      function get(date) {
+        $.ajax({
+          type: 'GET',
+          url: 'http://153.120.63.105/apis/deiko/get/?d=' + date + '&c=6',
+          dataType: 'jsonp',
+          success: function(json) {
+            console.log('success');
+            addArticle(json);
+          },
+          failed: function(json) {
+            console.log('failed');
+          }
+        });
+      }
+
+      function addArticle(json) {
+        next = json.next;
+        for (var i = 0; i < json.count; i++) {
+          var data = json.data[i];
+          var date = data.time.year + '.'
+                   + data.time.month + '.'
+                   + data.time.day + ' '
+                   + data.time.hour + ':'
+                   + data.time.minute;
+          var message = data.message;
+          var photo = data.photo;
+          stream.append(
+            $('<div />').addClass('article').append(
+              $('<img />').attr('src', photo)
+            ).append(
+              $('<div />').append(
+                $('<time />').text(date)
+              ).append(
+                $('<p />').text(message)
+              )
+            )
+          );
+        }
+      }
+
+      $('#more').click(function() {
+        get(next);
+      });
+    });
+    </script>
     <link rel="stylesheet" type="text/css" href="css/style.css" media="screen">
     <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.18.1/build/cssreset/cssreset-min.css">
     <meta name="viewport" content="width=device-width,initial-scale=0.5,user-scalable=no">
@@ -18,59 +81,10 @@
         <a href="post.html"></a>
       </h2>
     </header>
-    <article>
+    <article id="stream">
       <img src="img/copy_top.png">
-      <div class="article">
-        <img src="img/sample.png">
-        <div>
-          <time>2015.07.25 16:00</time>
-          <p>今日も餌の入れ物が陥没した...</p>
-        </div>
-      </div>
-      <div class="article">
-        <img src="img/sample.png">
-        <div>
-          <time>2015.07.25 11:20</time>
-          <p>でいこちょっと太った？</p>
-        </div>
-      </div>
-      <div class="article">
-        <img src="img/sample.png">
-        <div>
-          <time>2015.07.24 19:00</time>
-        </div>
-      </div>
-      <div class="article">
-        <img src="img/sample.png">
-        <div>
-          <time>2015.07.24 19:00</time>
-        </div>
-      </div>
-      <div class="article">
-        <img src="img/sample.png">
-        <div>
-          <time>2015.07.24 19:00</time>
-        </div>
-      </div>
-      <div class="article">
-        <img src="img/sample.png">
-        <div>
-          <time>2015.07.24 19:00</time>
-        </div>
-      </div>
-      <div class="article">
-        <img src="img/sample.png">
-        <div>
-          <time>2015.07.24 19:00</time>
-        </div>
-      </div>
-      <div class="article">
-        <img src="img/sample.png">
-        <div>
-          <time>2015.07.24 19:00</time>
-        </div>
-      </div>
     </article>
-  <footer>&copy; kanakoyan mochieer</footer>
+    <div id="more-area"><a id="more" href="javascript:void(0);">もっと見る</a></div>
+    <footer>&copy; kanakoyan mochieer</footer>
   </body>
 </html>
