@@ -1,0 +1,99 @@
+body {
+}
+
+header h1 a {
+  margin: 0 auto;
+  width : 300px;
+  height : 189px;
+  background-image: url("../img/title_other.png");
+}
+
+header h2 a {
+  background-image: url("../img/pen.png");
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width : 125px;
+  height : 137px;
+  overflow: hidden;
+}
+
+article {
+  text-align: center;
+}
+
+button {
+  display: block;
+  margin: 0 auto;
+}
+
+#photo {
+  color: #999999;
+  font-size: 200%;
+  background-color: #fff;
+  width: 500px;
+  height: 500px;
+  border: 2px solid #999999;
+}
+
+#photo img {
+  margin: 14px auto 30px;
+  width: 100px;
+  height: 100px;
+}
+
+article h2 {
+  margin: 30px 0 5px;
+  font-weight: lighter!important;
+}
+
+input[type=text],input[type=password] {
+  width: 500px;
+  height: 60px;
+  border: 1px solid #999999;
+  font-size: 180%;
+  line-height: 60px;
+  color : #333333;
+}
+
+#notice {
+  font-size: 120%;
+  margin: 5px 0 40px;
+}
+
+#passarea {
+  background-color: #a7f04b;
+  padding-bottom: 20px;
+}
+
+#passarea h1 {
+  font-size: 300%;
+  padding: 20px 0 5px;
+}
+
+#passarea button {
+  color: #fff;
+  font-weight: bold;
+  font-size: 300%;
+  margin: 60px auto;
+  width: 500px;
+  height: 100px;
+  border: 2px solid #999;
+  border-radius: 5px;
+  border-bottom: 6px solid #999;
+  background-color: #00e77b;
+}
+
+footer {
+  background-color: #a7f04b;
+}
+
+@media screen and (min-width: 1000px) {
+  article{
+    width: 100%;
+  }
+  button {
+    width: 400px;
+    height: 400px;
+  }
+}
