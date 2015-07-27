@@ -95,6 +95,27 @@ article img {
   height: 690px;
 }
 
+#more-area {
+  width: 100%;
+  background: #a7f04b;
+  text-align: center;
+  font-size: 150%;
+  padding: 0 0 30px 0;
+  clear: both;
+}
+
+#more {
+  color: #fff;
+  font-weight: bold;
+  margin: 0 auto;
+  line-height: 80px;
+  text-decoration: none;
+}
+
+#more:hover {
+  text-decoration: underline;
+}
+
 footer {
   position:absolute;
   bottom:0;

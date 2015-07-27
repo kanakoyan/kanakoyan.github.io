@@ -27,6 +27,14 @@ button {
   margin: 0 auto;
 }
 
+#uploadFile {
+  display: block;
+  opacity: 0;
+  width: 502px;
+  height: 502px;
+  margin: -502px auto 0 auto;
+}
+
 #photo {
   color: #999999;
   font-size: 200%;
@@ -34,12 +42,22 @@ button {
   width: 500px;
   height: 500px;
   border: 2px solid #999999;
+  margin: 0 auto;
+  line-height: 80px;
 }
 
 #photo img {
-  margin: 14px auto 30px;
+  margin: 160px auto 0 auto;
   width: 100px;
   height: 100px;
+}
+
+#myCanvas {
+  width: 500px;
+  height: 500px;
+  margin: 0 auto;
+  border: 2px solid #999999;
+  display: none;
 }
 
 article h2 {
@@ -82,6 +100,11 @@ input[type=text],input[type=password] {
   border-radius: 5px;
   border-bottom: 6px solid #999;
   background-color: #00e77b;
+}
+
+#passarea button[disabled] {
+  background-color: #aaa;
+  color: #eaeaea;
 }
 
 footer {

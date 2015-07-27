@@ -1,2 +1,2 @@
 # kanakoyan.github.io
-portfolio
+Deiko Site

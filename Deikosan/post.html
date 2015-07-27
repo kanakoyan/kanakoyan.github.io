@@ -4,7 +4,115 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta http-equiv="content-language" content="ja">
     <title>Deiko Diary</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript">
+      $(function(){
+        var trimWidth = 690;
+        var trimHeight = 690;
+        $('#myCanvas').attr('width', trimWidth).attr('height', trimHeight);
+
+        var base64str = '';
+        var originalBase64str = '';
+
+        $("#uploadFile").change(function() {
+          var canvas = $("#myCanvas")[0];
+          var ctx = canvas.getContext("2d");
+          var file = this.files[0];
+
+          if (!file.type.match(/^image\/(png|jpeg|gif)$/)) return;
+
+          var image = new Image();
+          var reader = new FileReader();
+
+          reader.onload = function(evt) {
+            image.onload = function() {
+              var w = image.width;
+              var h = image.height;
+              var ratio = Math.max(trimWidth / w, trimHeight / h);
+
+              ctx.drawImage(
+                image,
+                (trimWidth - w * ratio) / 2,
+                (trimHeight - h * ratio) / 2,
+                w * ratio,
+                h * ratio
+              );
+              originalBase64str = canvas.toDataURL('image/jpeg', 0.7);
+              originalBase64str = encodeURIComponent(originalBase64str);
+              base64str = originalBase64str;
+            }
+
+            image.src = evt.target.result;
+          }
+
+          reader.readAsDataURL(file);
+          $('#uploadForm').toggle();
+          $('#photo').toggle();
+          $('#myCanvas').toggle();
+          if ($('#passForm').val().length > 0) {
+            $('#postButton').removeAttr('disabled');
+          }
+        });
+
+        $('#passForm').bind('keydown keyup keypress change', function() {
+          if ($(this).val().length > 0 && $('#myCanvas').css('display') !== 'none') {
+            $('#postButton').removeAttr('disabled');
+          } else {
+            $('#postButton').attr('disabled', 'disabled');
+          }
+        });
+
+        $('#postButton').click(function() {
+          $('#postButton').attr('disabled', 'disabled').text('送信中...');
+          var date = new Date();
+          var fileName = date.getFullYear() + '';
+          if (date.getMonth() + 1 < 10) fileName += '0';
+          fileName += (date.getMonth() + 1);
+          if (date.getDate() < 10) fileName += '0';
+          fileName += date.getDate();
+          if (date.getHours() < 10) fileName += '0';
+          fileName += date.getHours();
+          if (date.getMinutes() < 10) fileName += '0';
+          fileName += date.getMinutes();
+          if (date.getSeconds() < 10) fileName += '0';
+          fileName += date.getSeconds();
+
+          request({fileName: fileName});
+        });
+
+      function request(data) {
+        var file = data.fileName;
+        if (base64str.length === 0) {
+          window.location = 'index.html';
+          return;
+        }
+        var length = 1000;
+        var reqStr = base64str.slice(0, length);
+        base64str = base64str.slice(length);
+        $.ajax({
+          type: 'GET',
+          url: 'http://153.120.63.105/apis/deiko/post/?f=' + file + '&p=' + $('#passForm').val() + '&i=' + reqStr,
+          dataType: 'jsonp',
+          success: function(json) {
+            request(json);
+          },
+          failed: function(json) {
+            base64str = originalBase64str;
+          }
+        });
+        $.ajax({
+          type: 'GET',
+          url: 'http://153.120.63.105/apis/deiko/post/?f=' + file + '&p=' + $('#passForm').val() + '&m=' + encodeURIComponent($('#messageForm').val()),
+          dataType: 'jsonp',
+          success: function(json) {
+          },
+          failed: function(json) {
+          }
+        });
+      }
+
+    });
+    </script>
     <link rel="stylesheet" type="text/css" href="css/style.css" media="screen">
     <link rel="stylesheet" type="text/css" href="css/post.css" media="screen">
     <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.18.1/build/cssreset/cssreset-min.css">
@@ -21,17 +129,19 @@
     </header>
     <article>
       <h1><img src="img/copy.png"></h1>
-      <button type="submit" id="photo">
+      <div id="photo">
         <img src="img/upload_btn.png">
         写真をアップロード
-      </button>
+      </div>
+      <input id="uploadFile" type="file" />
+      <canvas id="myCanvas"></canvas>
       <h2>写真を見てひとこと(30字以内)</h2>
-      <input type="text" maxlength="30" placeholder="今日もよくタネを食べた^^">
+      <input id="messageForm" type="text" maxlength="30" placeholder="今日もよくタネを食べた^^">
       <p id="notice">※ 個人を特定するような内容は投稿しないでください。</p>
       <div id="passarea">
         <h1>秘密のパスワード</h1>
-        <input type="password">
-        <button type="submit">投稿する</button>
+        <input id="passForm" type="password">
+        <button id="postButton" type="submit" disabled>投稿する</button>
       </div>
     </article>
   <footer>&copy; kanakoyan&mochieer</footer>
