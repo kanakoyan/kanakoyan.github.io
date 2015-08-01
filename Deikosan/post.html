@@ -25,6 +25,10 @@
           var reader = new FileReader();
 
           reader.onload = function(evt) {
+            var orientation = getOrientation(evt.target.result) || 1;
+
+ transformCoordinate(canvas, trimWidth, trimHeight, orientation);
+
             image.onload = function() {
               var w = image.width;
               var h = image.height;
@@ -38,6 +42,9 @@
                 h * ratio
               );
               originalBase64str = canvas.toDataURL('image/jpeg', 0.7);
+
+
+
               originalBase64str = encodeURIComponent(originalBase64str);
               base64str = originalBase64str;
             }
@@ -110,6 +117,106 @@
           }
         });
       }
+
+      function getOrientation(imgDataURL){
+              var byteString = atob(imgDataURL.split(',')[1]);
+              var orientaion = byteStringToOrientation(byteString);
+              return orientaion;
+
+              function byteStringToOrientation(img){
+                  var head = 0;
+                  var orientation;
+                  while (1){
+                      console.log('while');
+                      if (img.charCodeAt(head) == 255 & img.charCodeAt(head + 1) == 218) {
+                        console.log('break');
+                        break;
+                      }
+                      if (img.charCodeAt(head) == 255 & img.charCodeAt(head + 1) == 216) {
+                        console.log('+= 2');
+                        head += 2;
+                      }
+                      else {
+                        console.log('else');
+                          var length = img.charCodeAt(head + 2) * 256 + img.charCodeAt(head + 3);
+                          var endPoint = head + length + 2;
+                          if (img.charCodeAt(head) == 255 & img.charCodeAt(head + 1) == 225) {
+                            console.log('in');
+                              var segment = img.slice(head, endPoint);
+                              var bigEndian = segment.charCodeAt(10) == 77;
+                              if (bigEndian) {
+                                  var count = segment.charCodeAt(18) * 256 + segment.charCodeAt(19);
+                              } else {
+                                  var count = segment.charCodeAt(18) + segment.charCodeAt(19) * 256;
+                              }
+                              for (i=0;i<count;i++){
+                                  var field = segment.slice(20 + 12 * i, 32 + 12 * i);
+                                  if ((bigEndian && field.charCodeAt(1) == 18) || (!bigEndian && field.charCodeAt(0) == 18)) {
+                                      orientation = bigEndian ? field.charCodeAt(9) : field.charCodeAt(8);
+                                  }
+                              }
+                              break;
+                          }
+                          head = endPoint;
+                      }
+                      if (head > img.length){break;}
+                  }
+                  return orientation;
+              }
+          }
+
+          function transformCoordinate(canvas, width, height, orientation) {
+        if (orientation > 4) {
+            canvas.width = height;
+            canvas.height = width;
+        } else {
+            canvas.width = width;
+            canvas.height = height;
+        }
+        var ctx = canvas.getContext('2d');
+        switch (orientation) {
+            case 2:
+                // horizontal flip
+                ctx.translate(width, 0);
+                ctx.scale(-1, 1);
+                break;
+            case 3:
+                // 180 rotate left
+                ctx.translate(width, height);
+                ctx.rotate(Math.PI);
+                break;
+            case 4:
+                // vertical flip
+                ctx.translate(0, height);
+                ctx.scale(1, -1);
+                break;
+            case 5:
+                // vertical flip + 90 rotate right
+                ctx.rotate(0.5 * Math.PI);
+                ctx.scale(1, -1);
+                break;
+            case 6:
+                // 90 rotate right
+                ctx.rotate(0.5 * Math.PI);
+                ctx.translate(0, -height);
+                break;
+            case 7:
+                // horizontal flip + 90 rotate right
+                ctx.rotate(0.5 * Math.PI);
+                ctx.translate(width, -height);
+                ctx.scale(-1, 1);
+                break;
+            case 8:
+                // 90 rotate left
+                ctx.rotate(-0.5 * Math.PI);
+                ctx.translate(-width, 0);
+                break;
+            default:
+                break;
+        }
+        return canvas;
+    }
+
 
     });
     </script>
