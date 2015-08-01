@@ -95,6 +95,19 @@ article img {
   height: 690px;
 }
 
+.article a {
+  color: rgb(255, 82, 175);
+  font-weight: bold;
+  margin-left: 5px;
+  float: right;
+  text-decoration: none;
+}
+
+#heart {
+  float: right;
+
+}
+
 #more-area {
   width: 100%;
   background: #a7f04b;
